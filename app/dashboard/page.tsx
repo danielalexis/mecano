@@ -1,10 +1,9 @@
 'use client';
 
 import { Activity, Car, DollarSign, Wrench } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useFirestoreCollection } from '@/lib/hooks';
-import { orderBy, where, Timestamp } from 'firebase/firestore';
+import { orderBy, Timestamp } from 'firebase/firestore';
 import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/components/language-provider';
@@ -12,7 +11,7 @@ import { useLanguage } from '@/components/language-provider';
 interface Service {
   id: string;
   description: string;
-  date: any;
+  date: Timestamp;
   total: number;
   status: string;
   vehicleId: string;
@@ -50,7 +49,7 @@ export default function DashboardPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-4xl font-display text-white tracking-widest">{t.dashboard.title}</h1>
-          <p className="text-gray-400 font-tech text-sm mt-1">{t.dashboard.status} // {new Date().toLocaleDateString()}</p>
+          <p className="text-gray-400 font-tech text-sm mt-1">{t.dashboard.status} {'//'} {new Date().toLocaleDateString()}</p>
         </div>
         <div className="flex gap-3">
           <Link href="/dashboard/vehicles/new">

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, Timestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Wrench, CheckCircle, Eye, FileText, User, Moon, Sun } from 'lucide-react';
 import Image from 'next/image';
@@ -22,10 +22,10 @@ interface Service {
   description: string;
   customerStates?: string;
   techReport?: string;
-  date: any;
+  date: Timestamp;
   total: number;
   status: string;
-  vehicleId: string;
+  vehicleId: string | { id: string };
   imageUrls?: string[];
   subtotal: number;
   vatAmount: number;
@@ -79,8 +79,8 @@ export default function PublicServicePage() {
           const serviceData = { id: serviceSnap.id, ...serviceSnap.data() } as Service;
           setService(serviceData);
 
-          const vehicleId = typeof serviceData.vehicleId === 'object' 
-            ? (serviceData.vehicleId as any)?.id 
+          const vehicleId = typeof serviceData.vehicleId === 'object' && serviceData.vehicleId !== null
+            ? (serviceData.vehicleId as { id: string }).id 
             : serviceData.vehicleId;
 
           if (vehicleId) {
@@ -176,7 +176,7 @@ export default function PublicServicePage() {
               <h3 className="text-[10px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-[0.2em] mb-3 flex items-center gap-2">
                 <User className="w-3.5 h-3.5" /> {t.public.customer_reported}
               </h3>
-              <p className="text-gray-700 dark:text-zinc-300 italic text-lg font-medium leading-relaxed">"{service.customerStates}"</p>
+              <p className="text-gray-700 dark:text-zinc-300 italic text-lg font-medium leading-relaxed">&quot;{service.customerStates}&quot;</p>
             </div>
           )}
 

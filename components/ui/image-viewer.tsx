@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import { isVideoFile } from '@/lib/utils';
@@ -14,12 +14,12 @@ interface ImageViewerProps {
 }
 
 export default function ImageViewer({ images, initialIndex, isOpen, onClose, onIndexChange }: ImageViewerProps) {
-  const navigate = (direction: number) => {
+  const navigate = useCallback((direction: number) => {
     const newIndex = initialIndex + direction;
     if (newIndex >= 0 && newIndex < images.length) {
       onIndexChange(newIndex);
     }
-  };
+  }, [initialIndex, images.length, onIndexChange]);
 
   // Handle keyboard navigation
   useEffect(() => {
@@ -32,7 +32,7 @@ export default function ImageViewer({ images, initialIndex, isOpen, onClose, onI
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, initialIndex, onClose]);
+  }, [isOpen, onClose, navigate]);
 
   if (!isOpen) return null;
 

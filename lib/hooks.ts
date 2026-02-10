@@ -11,7 +11,7 @@ export function useFirestoreCollection<T = DocumentData>(
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    setLoading(true);
+    // setLoading(true); // Initial state is already true
     const q = query(collection(db, collectionName), ...constraints);
 
     const unsubscribe = onSnapshot(
@@ -32,7 +32,8 @@ export function useFirestoreCollection<T = DocumentData>(
     );
 
     return () => unsubscribe();
-  }, [collectionName]); // Constraints omitted from dep array for simplicity, useMemo in real app
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [collectionName, JSON.stringify(constraints)]);
 
   return { data, loading, error };
 }

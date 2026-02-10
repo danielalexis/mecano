@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { doc, getDoc, collection, query, where, orderBy, getDocs } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, orderBy, getDocs, Timestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
-import { Car, Wrench, Calendar, Activity, Share2 } from 'lucide-react';
+import { Car, Calendar, Activity, Wrench, Share2 } from 'lucide-react';
 import Link from 'next/link';
 import { useLanguage } from '@/components/language-provider';
 
@@ -21,7 +21,7 @@ interface Vehicle {
 
 interface Service {
   id: string;
-  date: any; // Firestore timestamp
+  date: Timestamp;
   description: string;
   total: number;
   status: string;
@@ -150,20 +150,19 @@ export default function VehicleDetailPage() {
                 onClick={() => router.push(`/dashboard/services/${service.id}`)}
                 className="group relative bg-brand-dark border border-brand-border p-4 hover:border-brand-orange transition-all cursor-pointer overflow-hidden"
               >
-                <div className="flex justify-between items-center relative z-10">
-                  <div className="flex items-start gap-4">
-                    <div className="bg-brand-surface p-3 rounded border border-brand-border group-hover:bg-brand-orange group-hover:text-black transition-colors">
-                      <Wrench className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <div className="text-white font-display text-xl mb-1">{service.description}</div>
-                      <div className="text-xs font-tech text-gray-500">
-                        {t.common.date}: {service.date?.toDate().toLocaleDateString() || 'N/A'} // ID: {service.id.slice(0,8)}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-right flex items-center gap-4">
-                    <div className="text-right">
+                                  <div className="flex justify-between items-center relative z-10">
+                                  <div className="flex items-start gap-4">
+                                    <div className="bg-brand-surface p-3 rounded border border-brand-border group-hover:bg-brand-orange group-hover:text-black transition-colors">
+                                      <Calendar className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                      <div className="text-white font-display text-xl mb-1">{service.description}</div>
+                                      <div className="text-xs font-tech text-gray-500">
+                                        {t.common.date}: {service.date?.toDate().toLocaleDateString() || 'N/A'}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="text-right flex items-center gap-4">                    <div className="text-right">
                         <div className="text-2xl font-display text-brand-orange">€ {service.total?.toFixed(2)}</div>
                         <span className={`text-xs font-bold uppercase px-2 py-0.5 rounded border ${
                         service.status === 'completed' ? 'text-green-400 border-green-900 bg-green-900/20' :

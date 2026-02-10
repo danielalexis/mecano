@@ -26,7 +26,7 @@ export default function EditVehiclePage() {
   const { t } = useLanguage();
   const [loading, setLoading] = useState(true);
   
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<VehicleForm>();
+  const { register, handleSubmit, reset, formState: { isSubmitting } } = useForm<VehicleForm>();
 
   useEffect(() => {
     async function fetchVehicle() {

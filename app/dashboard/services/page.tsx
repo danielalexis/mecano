@@ -3,15 +3,14 @@
 import { useFirestoreCollection } from '@/lib/hooks';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Wrench } from 'lucide-react';
-import { orderBy } from 'firebase/firestore';
+import { orderBy, Timestamp } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/components/language-provider';
 
 interface Service {
   id: string;
   description: string;
-  date: any;
+  date: Timestamp;
   total: number;
   status: string;
   vehicleId: string | { id: string };
@@ -55,8 +54,8 @@ export default function ServicesPage() {
               </thead>
               <tbody className="divide-y divide-brand-border/50">
                 {services.map((service) => {
-                  const vehicleId = typeof service.vehicleId === 'object' 
-                    ? (service.vehicleId as any)?.id 
+                  const vehicleId = typeof service.vehicleId === 'object' && service.vehicleId !== null
+                    ? (service.vehicleId as { id: string }).id 
                     : service.vehicleId;
 
                   return (

@@ -5,7 +5,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Save, Settings } from 'lucide-react';
+import { Save } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useLanguage } from '@/components/language-provider';
 

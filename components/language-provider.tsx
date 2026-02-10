@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode } from 'react';
 import { translations, Language } from '@/lib/translations';
 
 type Translations = typeof translations.en;
@@ -14,21 +14,19 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState<Language>('en');
-
-  useEffect(() => {
-    // Try to load from localStorage
-    const saved = localStorage.getItem('mecano-lang') as Language;
-    if (saved && (saved === 'en' || saved === 'pt')) {
-      setLanguage(saved);
-    } else {
-      // Auto-detect
+  const [language, setLanguage] = useState<Language>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('mecano-lang') as Language;
+      if (saved && (saved === 'en' || saved === 'pt')) {
+        return saved;
+      }
       const browserLang = navigator.language.toLowerCase();
       if (browserLang.includes('pt')) {
-        setLanguage('pt');
+        return 'pt';
       }
     }
-  }, []);
+    return 'en';
+  });
 
   const handleSetLanguage = (lang: Language) => {
     setLanguage(lang);

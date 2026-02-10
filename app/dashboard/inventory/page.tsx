@@ -1,12 +1,11 @@
 'use client';
 
-import { useState } from 'react';
 import { useFirestoreCollection } from '@/lib/hooks';
-import { addDoc, collection, doc, deleteDoc, updateDoc, Timestamp } from 'firebase/firestore';
+import { addDoc, collection, doc, deleteDoc, Timestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Package, Trash2, Edit, Save } from 'lucide-react';
+import { Package, Trash2, Save } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useLanguage } from '@/components/language-provider';
 
@@ -21,9 +20,8 @@ interface Part {
 export default function InventoryPage() {
   const { t } = useLanguage();
   const { data: parts, loading } = useFirestoreCollection<Part>('inventory');
-  const [editingId, setEditingId] = useState<string | null>(null);
   
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<Omit<Part, 'id'>>();
+  const { register, handleSubmit, reset } = useForm<Omit<Part, 'id'>>();
 
   const onAddPart = async (data: Omit<Part, 'id'>) => {
     try {
