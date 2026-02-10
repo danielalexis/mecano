@@ -273,22 +273,28 @@ function ServiceFormContent() {
               </div>
             </div>
 
-            <Input 
-              label={t.services.form.date} 
-              type="date"
-              {...register('date', { required: 'Date is required' })}
-              fullWidth
-            />
-             <Input 
-              label={t.services.form.vat_rate} 
-              type="number"
-              {...register('vatRate')}
-              fullWidth
-            />
+            <div className="md:col-span-1">
+              <label className="block mb-1 text-xs font-display text-gray-500 uppercase tracking-widest ml-1">
+                {t.common.date}
+              </label>
+              <Input 
+                type="date"
+                {...register('date', { required: 'Date is required' })}
+                fullWidth
+              />
+            </div>
+
+             <div className="md:col-span-2">
+               <Input 
+                label={t.services.form.vat_rate} 
+                type="number"
+                {...register('vatRate')}
+                fullWidth
+              />
+             </div>
           </div>
         </div>
 
-        {/* Photo Upload Section */}
         <div className="bg-brand-surface border border-brand-border p-6 rounded relative">
            <div className="flex justify-between items-center mb-4 border-b border-brand-border pb-2">
             <h3 className="text-white font-display text-xl flex items-center gap-2">
@@ -316,7 +322,6 @@ function ServiceFormContent() {
           </div>
         </div>
 
-        {/* Parts Section */}
         <div className="bg-brand-surface border border-brand-border p-6 rounded relative">
           <div className="flex justify-between items-center mb-4 border-b border-brand-border pb-2">
             <h3 className="text-white font-display text-xl flex items-center gap-2">
@@ -366,7 +371,6 @@ function ServiceFormContent() {
           </div>
         </div>
 
-        {/* Labor Section */}
         <div className="bg-brand-surface border border-brand-border p-6 rounded relative">
            <div className="flex justify-between items-center mb-4 border-b border-brand-border pb-2">
             <h3 className="text-white font-display text-xl flex items-center gap-2">
@@ -393,7 +397,6 @@ function ServiceFormContent() {
           </div>
         </div>
 
-        {/* Totals Summary */}
         <div className="fixed bottom-0 left-0 right-0 md:left-64 bg-brand-dark border-t-2 border-brand-orange p-4 shadow-2xl z-40">
            <div className="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="flex gap-8 text-sm font-tech">

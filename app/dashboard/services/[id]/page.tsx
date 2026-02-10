@@ -11,8 +11,10 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { Trash2, Plus, Save, Upload, Image as ImageIcon, ArrowLeft, Share2, Eye, PlayCircle } from 'lucide-react';
 import Image from 'next/image';
 import { isVideoFile } from '@/lib/utils';
-import ImageViewer from '@/components/ui/image-viewer';
 import { useLanguage } from '@/components/language-provider';
+import dynamic from 'next/dynamic';
+
+const ImageViewerDynamic = dynamic(() => import('@/components/ui/image-viewer'), { ssr: false });
 
 interface PartItem {
   name: string;
@@ -55,7 +57,6 @@ async function uploadFileToR2(file: File): Promise<string> {
   return fileKey;
 }
 
-// Helper to resolve image source
 const getImageUrl = (path: string) => {
   if (path.startsWith('http')) return path;
   return `/api/file?key=${encodeURIComponent(path)}`;
@@ -72,7 +73,6 @@ function ServiceDetailContent() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   
-  // Image Viewer State
   const [viewerOpen, setViewerOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -178,7 +178,7 @@ function ServiceDetailContent() {
       for (const file of selectedFiles) {
         try {
           const url = await uploadFileToR2(file);
-          newImageUrls.push(url);
+          imageUrls.push(url);
         } catch (err) {
           console.error(`Failed to upload ${file.name}:`, err);
           alert(`Failed to upload ${file.name}. Continuing without it.`);
@@ -195,7 +195,7 @@ function ServiceDetailContent() {
         updatedAt: Timestamp.now(),
       });
       
-      alert(t.common.saving.replace('...', 'd!')); // "SAVED!" hack or just use a toast later
+      alert(t.common.save + "!");
       setImageUrls(newImageUrls);
       setSelectedFiles([]);
     } catch (e) {
@@ -232,7 +232,6 @@ function ServiceDetailContent() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 pb-20">
         
-        {/* Basic Info */}
         <div className="bg-brand-surface border border-brand-border p-6 rounded relative overflow-hidden">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input 
@@ -289,22 +288,26 @@ function ServiceDetailContent() {
               </div>
             </div>
 
-            <Input 
-              label={t.services.form.date} 
-              type="date"
-              {...register('date', { required: 'Date is required' })}
-              fullWidth
-            />
-             <Input 
-              label={t.services.form.vat_rate} 
-              type="number"
-              {...register('vatRate')}
-              fullWidth
-            />
+            <div className="md:col-span-1">
+              <Input 
+                label={t.services.form.date} 
+                type="date"
+                {...register('date', { required: 'Date is required' })}
+                fullWidth
+              />
+            </div>
+
+             <div className="md:col-span-2">
+               <Input 
+                label={t.services.form.vat_rate} 
+                type="number"
+                {...register('vatRate')}
+                fullWidth
+              />
+             </div>
           </div>
         </div>
 
-        {/* Photo Upload Section */}
         <div className="bg-brand-surface border border-brand-border p-6 rounded relative">
            <div className="flex justify-between items-center mb-4 border-b border-brand-border pb-2">
             <h3 className="text-white font-display text-xl flex items-center gap-2">
@@ -356,7 +359,7 @@ function ServiceDetailContent() {
               <ImageIcon className="w-10 h-10 text-gray-500 mb-2 group-hover:text-brand-orange transition-colors" />
               <p className="text-gray-400 font-tech text-sm">
                 {selectedFiles.length > 0 
-                  ? `${selectedFiles.length} file(s) selected` 
+                  ? `${selectedFiles.length} new file(s) selected` 
                   : t.services.form.upload_text
                 }
               </p>
@@ -365,7 +368,6 @@ function ServiceDetailContent() {
           </div>
         </div>
 
-        {/* Parts Section */}
         <div className="bg-brand-surface border border-brand-border p-6 rounded relative">
           <div className="flex justify-between items-center mb-4 border-b border-brand-border pb-2">
             <h3 className="text-white font-display text-xl flex items-center gap-2">
@@ -415,7 +417,6 @@ function ServiceDetailContent() {
           </div>
         </div>
 
-        {/* Labor Section */}
         <div className="bg-brand-surface border border-brand-border p-6 rounded relative">
            <div className="flex justify-between items-center mb-4 border-b border-brand-border pb-2">
             <h3 className="text-white font-display text-xl flex items-center gap-2">
@@ -442,7 +443,6 @@ function ServiceDetailContent() {
           </div>
         </div>
 
-        {/* Totals Summary */}
         <div className="fixed bottom-0 left-0 right-0 md:left-64 bg-brand-dark border-t-2 border-brand-orange p-4 shadow-2xl z-40">
            <div className="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="flex gap-8 text-sm font-tech">
@@ -474,7 +474,7 @@ function ServiceDetailContent() {
 
       </form>
 
-      <ImageViewer 
+      <ImageViewerDynamic 
         images={imageUrls.map(getImageUrl)} 
         initialIndex={currentImageIndex} 
         isOpen={viewerOpen} 
