@@ -3,30 +3,15 @@ import { getAuth, GoogleAuthProvider, type Auth } from "firebase/auth";
 import { getFirestore, type Firestore } from "firebase/firestore";
 import { getStorage, type FirebaseStorage } from "firebase/storage";
 
-// Function to get Firebase config (evaluated at runtime on client)
-function getFirebaseConfig() {
-  if (typeof window === 'undefined') {
-    // Server-side: return dummy config that won't be used
-    return {
-      apiKey: "dummy-key",
-      authDomain: "dummy-project.firebaseapp.com",
-      projectId: "dummy-project",
-      storageBucket: "dummy-project.appspot.com",
-      messagingSenderId: "00000000000",
-      appId: "1:00000000000:web:00000000000000",
-    };
-  }
-  
-  // Client-side: get from environment variables
-  return {
-    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "dummy-key",
-    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "dummy-project.firebaseapp.com",
-    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "dummy-project",
-    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "dummy-project.appspot.com",
-    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "00000000000",
-    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:00000000000:web:00000000000000",
-  };
-}
+// Firebase config - Next.js will replace these at build time
+const firebaseConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY as string,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN as string,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID as string,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET as string,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID as string,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID as string,
+};
 
 // Only initialize Firebase on the client side
 let _app: FirebaseApp | undefined;
@@ -36,8 +21,7 @@ let _storage: FirebaseStorage | undefined;
 let _googleProvider: GoogleAuthProvider | undefined;
 
 if (typeof window !== 'undefined') {
-  const config = getFirebaseConfig();
-  _app = !getApps().length ? initializeApp(config) : getApp();
+  _app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
   _auth = getAuth(_app);
   _db = getFirestore(_app);
   _storage = getStorage(_app);
