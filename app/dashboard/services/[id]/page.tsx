@@ -182,7 +182,7 @@ function ServiceDetailContent() {
       for (const file of selectedFiles) {
         try {
           const url = await uploadFileToR2(file);
-          imageUrls.push(url);
+          newImageUrls.push(url);
         } catch (err) {
           console.error(`Failed to upload ${file.name}:`, err);
           alert(`Failed to upload ${file.name}. Continuing without it.`);
