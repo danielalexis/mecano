@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { Activity, Car, DollarSign, Wrench } from 'lucide-react';
 import Link from 'next/link';
 import { useFirestoreCollection } from '@/lib/hooks';

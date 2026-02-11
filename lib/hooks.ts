@@ -11,7 +11,12 @@ export function useFirestoreCollection<T = DocumentData>(
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    // setLoading(true); // Initial state is already true
+    // Only run on client side
+    if (typeof window === 'undefined') {
+      setLoading(false);
+      return;
+    }
+
     const q = query(collection(db, collectionName), ...constraints);
 
     const unsubscribe = onSnapshot(

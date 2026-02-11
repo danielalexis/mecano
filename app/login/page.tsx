@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
@@ -16,25 +18,34 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
     try {
       await signInWithEmailAndPassword(auth, email, password);
       router.push('/dashboard');
     } catch (err) {
       setError(t.auth.error_login);
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleGoogleLogin = async () => {
+    setLoading(true);
+    setError(null);
     try {
       await signInWithPopup(auth, googleProvider);
       router.push('/dashboard');
     } catch (err) {
       setError(t.auth.error_google);
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -59,6 +70,7 @@ export default function LoginPage() {
             variant="secondary" 
             className="w-full flex items-center gap-2 justify-center"
             onClick={handleGoogleLogin}
+            disabled={loading}
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -112,8 +124,8 @@ export default function LoginPage() {
               </div>
             )}
 
-            <Button type="submit" className="w-full" variant="primary">
-              {t.auth.login_btn}
+            <Button type="submit" className="w-full" variant="primary" disabled={loading}>
+              {loading ? 'Loading...' : t.auth.login_btn}
             </Button>
           </form>
 

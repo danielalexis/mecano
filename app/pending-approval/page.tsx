@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useRouter } from 'next/navigation';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
@@ -53,7 +55,7 @@ export default function PendingApprovalPage() {
         </div>
         
         <div className="mt-6 pt-6 border-t border-brand-border text-xs font-tech text-gray-600">
-          USER_ID: {auth.currentUser?.uid || 'UNKNOWN'}
+          USER_ID: {(typeof window !== 'undefined' && auth?.currentUser?.uid) || 'LOADING...'}
         </div>
       </div>
     </div>

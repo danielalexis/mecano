@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { doc, getDoc, updateDoc, Timestamp, deleteDoc } from 'firebase/firestore';
@@ -11,9 +13,9 @@ import { Trash2, Plus, Save, Upload, Image as ImageIcon, ArrowLeft, Share2, Eye,
 import Image from 'next/image';
 import { isVideoFile } from '@/lib/utils';
 import { useLanguage } from '@/components/language-provider';
-import dynamic from 'next/dynamic';
+import dynamicImport from 'next/dynamic';
 
-const ImageViewerDynamic = dynamic(() => import('@/components/ui/image-viewer'), { ssr: false });
+const ImageViewerDynamic = dynamicImport(() => import('@/components/ui/image-viewer'), { ssr: false });
 
 interface PartItem {
   name: string;
