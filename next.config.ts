@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   serverExternalPackages: ['@firebase/auth', '@firebase/firestore', '@firebase/storage'],
   
-  webpack: (config, { isServer, webpack }) => {
+  webpack: (config, { isServer }) => {
     config.resolve.alias = {
       ...config.resolve.alias,
       'protobufjs': 'protobufjs/minimal',
