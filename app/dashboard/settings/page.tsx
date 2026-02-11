@@ -3,8 +3,6 @@
 export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from 'react';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Save } from 'lucide-react';
@@ -26,6 +24,8 @@ export default function SettingsPage() {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
+        const { doc, getDoc } = await import('firebase/firestore');
+        const { db } = await import('@/lib/firebase');
         const docRef = doc(db, 'settings', 'global');
         const snap = await getDoc(docRef);
         if (snap.exists()) {
@@ -46,6 +46,8 @@ export default function SettingsPage() {
 
   const onSave = async (data: AppSettings) => {
     try {
+      const { doc, setDoc } = await import('firebase/firestore');
+      const { db } = await import('@/lib/firebase');
       await setDoc(doc(db, 'settings', 'global'), data);
       alert(t.common.saving.replace('...', 'd!'));
     } catch (err) {

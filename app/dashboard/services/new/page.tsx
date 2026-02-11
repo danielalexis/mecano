@@ -4,8 +4,7 @@ export const dynamic = 'force-dynamic';
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { collection, addDoc, Timestamp, getDocs, query, orderBy } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import type { Timestamp } from 'firebase/firestore';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useForm, useFieldArray } from 'react-hook-form';
@@ -102,6 +101,8 @@ function ServiceFormContent() {
   useEffect(() => {
     const fetchVehicles = async () => {
       try {
+        const { collection, getDocs, query, orderBy } = await import('firebase/firestore');
+        const { db } = await import('@/lib/firebase');
         const q = query(collection(db, 'vehicles'), orderBy('plate'));
         const querySnapshot = await getDocs(q);
         const fetchedVehicles = querySnapshot.docs.map(doc => ({
@@ -157,6 +158,8 @@ function ServiceFormContent() {
         }
       }
 
+      const { collection, addDoc, Timestamp } = await import('firebase/firestore');
+      const { db } = await import('@/lib/firebase');
       await addDoc(collection(db, 'services'), {
         ...data,
         date: Timestamp.fromDate(new Date(data.date)),

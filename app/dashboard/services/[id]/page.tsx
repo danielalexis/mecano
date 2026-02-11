@@ -4,8 +4,7 @@ export const dynamic = 'force-dynamic';
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { doc, getDoc, updateDoc, Timestamp, deleteDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import type { Timestamp } from 'firebase/firestore';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useForm, useFieldArray } from 'react-hook-form';
@@ -107,6 +106,8 @@ function ServiceDetailContent() {
     async function fetchService() {
       if (!id) return;
       try {
+        const { doc, getDoc } = await import('firebase/firestore');
+        const { db } = await import('@/lib/firebase');
         const docRef = doc(db, 'services', id);
         const snap = await getDoc(docRef);
         
@@ -155,6 +156,8 @@ function ServiceDetailContent() {
   const handleDelete = async () => {
     if (confirm(t.common.delete + "?")) {
       try {
+        const { doc, deleteDoc } = await import('firebase/firestore');
+        const { db } = await import('@/lib/firebase');
         await deleteDoc(doc(db, 'services', id));
         router.push(vehicleId ? `/dashboard/vehicles/${vehicleId}` : '/dashboard/services');
       } catch (err) {
@@ -186,6 +189,8 @@ function ServiceDetailContent() {
         }
       }
 
+      const { doc, updateDoc, Timestamp } = await import('firebase/firestore');
+      const { db } = await import('@/lib/firebase');
       await updateDoc(doc(db, 'services', id), {
         ...data,
         date: Timestamp.fromDate(new Date(data.date)),

@@ -2,8 +2,7 @@
 export const dynamic = 'force-dynamic';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { collection, addDoc, Timestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import type { Timestamp } from 'firebase/firestore';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useForm } from 'react-hook-form';
@@ -25,6 +24,8 @@ export default function NewVehiclePage() {
 
   const onSubmit = async (data: VehicleForm) => {
     try {
+      const { collection, addDoc, Timestamp } = await import('firebase/firestore');
+      const { db } = await import('@/lib/firebase');
       const docRef = await addDoc(collection(db, 'vehicles'), {
         ...data,
         createdAt: Timestamp.now(),

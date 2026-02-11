@@ -4,8 +4,6 @@ export const dynamic = 'force-dynamic';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
-import { auth, googleProvider } from '@/lib/firebase';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -25,6 +23,9 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
     try {
+      // Dynamic import to prevent Firebase from loading in worker
+      const { signInWithEmailAndPassword } = await import('firebase/auth');
+      const { auth } = await import('@/lib/firebase');
       await signInWithEmailAndPassword(auth, email, password);
       router.push('/dashboard');
     } catch (err) {
@@ -39,6 +40,9 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
     try {
+      // Dynamic import to prevent Firebase from loading in worker
+      const { signInWithPopup } = await import('firebase/auth');
+      const { auth, googleProvider } = await import('@/lib/firebase');
       await signInWithPopup(auth, googleProvider);
       router.push('/dashboard');
     } catch (err) {

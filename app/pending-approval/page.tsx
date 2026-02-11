@@ -2,16 +2,26 @@
 
 export const dynamic = 'force-dynamic';
 
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { signOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { ShieldAlert, LogOut } from 'lucide-react';
 
 export default function PendingApprovalPage() {
   const router = useRouter();
+  const [userId, setUserId] = useState('LOADING...');
+
+  useEffect(() => {
+    // Get user ID from Firebase on client side
+    (async () => {
+      const { auth } = await import('@/lib/firebase');
+      setUserId(auth?.currentUser?.uid || 'UNKNOWN');
+    })();
+  }, []);
 
   const handleLogout = async () => {
+    const { signOut } = await import('firebase/auth');
+    const { auth } = await import('@/lib/firebase');
     await signOut(auth);
     router.push('/login');
   };
@@ -55,7 +65,7 @@ export default function PendingApprovalPage() {
         </div>
         
         <div className="mt-6 pt-6 border-t border-brand-border text-xs font-tech text-gray-600">
-          USER_ID: {(typeof window !== 'undefined' && auth?.currentUser?.uid) || 'LOADING...'}
+          USER_ID: {userId}
         </div>
       </div>
     </div>

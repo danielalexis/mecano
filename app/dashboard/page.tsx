@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 import { Activity, Car, DollarSign, Wrench } from 'lucide-react';
 import Link from 'next/link';
 import { useFirestoreCollection } from '@/lib/hooks';
-import { orderBy, Timestamp } from 'firebase/firestore';
+import type { Timestamp } from 'firebase/firestore';
 import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/components/language-provider';
@@ -26,8 +26,17 @@ interface Part {
 export default function DashboardPage() {
   const router = useRouter();
   const { t } = useLanguage();
-  const { data: services, loading: loadingServices } = useFirestoreCollection<Service>('services', [orderBy('date', 'desc')]);
+  const { data: rawServices, loading: loadingServices } = useFirestoreCollection<Service>('services');
   const { data: parts, loading: loadingParts } = useFirestoreCollection<Part>('inventory');
+  
+  // Sort services by date descending (client-side)
+  const services = useMemo(() => {
+    return [...rawServices].sort((a, b) => {
+      const dateA = a.date?.toDate?.()?.getTime() || 0;
+      const dateB = b.date?.toDate?.()?.getTime() || 0;
+      return dateB - dateA;
+    });
+  }, [rawServices]);
   
   const metrics = useMemo(() => {
     const now = new Date();

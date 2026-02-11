@@ -5,9 +5,10 @@ export const dynamic = 'force-dynamic';
 import { useFirestoreCollection } from '@/lib/hooks';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { orderBy, Timestamp } from 'firebase/firestore';
+import type { Timestamp } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/components/language-provider';
+import { useMemo } from 'react';
 
 interface Service {
   id: string;
@@ -21,7 +22,16 @@ interface Service {
 export default function ServicesPage() {
   const router = useRouter();
   const { t } = useLanguage();
-  const { data: services, loading } = useFirestoreCollection<Service>('services', [orderBy('date', 'desc')]);
+  const { data: rawServices, loading } = useFirestoreCollection<Service>('services');
+  
+  // Sort services by date descending (client-side)
+  const services = useMemo(() => {
+    return [...rawServices].sort((a, b) => {
+      const dateA = a.date?.toDate?.()?.getTime() || 0;
+      const dateB = b.date?.toDate?.()?.getTime() || 0;
+      return dateB - dateA;
+    });
+  }, [rawServices]);
 
   return (
     <div className="space-y-6 animate-fade-in">

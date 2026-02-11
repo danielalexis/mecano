@@ -4,8 +4,7 @@ export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { doc, getDoc, collection, query, where, orderBy, getDocs, Timestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import type { Timestamp } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Car, Calendar, Activity, Wrench, Share2 } from 'lucide-react';
 import Link from 'next/link';
@@ -41,6 +40,8 @@ export default function VehicleDetailPage() {
     async function fetchVehicleData() {
       if (!id) return;
       try {
+        const { doc, getDoc, collection, query, where, orderBy, getDocs } = await import('firebase/firestore');
+        const { db } = await import('@/lib/firebase');
         const vehicleRef = doc(db, 'vehicles', id);
         const vehicleSnap = await getDoc(vehicleRef);
 

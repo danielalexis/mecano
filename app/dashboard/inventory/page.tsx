@@ -3,8 +3,6 @@
 export const dynamic = 'force-dynamic';
 
 import { useFirestoreCollection } from '@/lib/hooks';
-import { addDoc, collection, doc, deleteDoc, Timestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Package, Trash2, Save } from 'lucide-react';
@@ -27,6 +25,10 @@ export default function InventoryPage() {
 
   const onAddPart = async (data: Omit<Part, 'id'>) => {
     try {
+      // Dynamic import to prevent Firebase from loading in worker
+      const { addDoc, collection, Timestamp } = await import('firebase/firestore');
+      const { db } = await import('@/lib/firebase');
+      
       await addDoc(collection(db, 'inventory'), {
         ...data,
         updatedAt: Timestamp.now(),
@@ -39,6 +41,10 @@ export default function InventoryPage() {
 
   const onDeletePart = async (id: string) => {
     if (confirm(t.common.delete + "?")) {
+      // Dynamic import to prevent Firebase from loading in worker
+      const { doc, deleteDoc } = await import('firebase/firestore');
+      const { db } = await import('@/lib/firebase');
+      
       await deleteDoc(doc(db, 'inventory', id));
     }
   };

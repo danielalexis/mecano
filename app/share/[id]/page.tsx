@@ -4,8 +4,7 @@ export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { doc, getDoc, Timestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import type { Timestamp } from 'firebase/firestore';
 import { Wrench, CheckCircle, Eye, FileText, User, Moon, Sun } from 'lucide-react';
 import Image from 'next/image';
 import { useLanguage } from '@/components/language-provider';
@@ -74,6 +73,8 @@ export default function PublicServicePage() {
     async function fetchData() {
       if (!id) return;
       try {
+        const { doc, getDoc } = await import('firebase/firestore');
+        const { db } = await import('@/lib/firebase');
         const serviceRef = doc(db, 'services', id);
         const serviceSnap = await getDoc(serviceRef);
 

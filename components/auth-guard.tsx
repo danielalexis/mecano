@@ -2,9 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
-import { auth, db } from '@/lib/firebase';
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -12,7 +9,15 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const [authorized, setAuthorized] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    let unsubscribe: (() => void) | undefined;
+
+    (async () => {
+      // Dynamic import to prevent Firebase from loading in worker
+      const { onAuthStateChanged } = await import('firebase/auth');
+      const { doc, getDoc, setDoc, Timestamp } = await import('firebase/firestore');
+      const { auth, db } = await import('@/lib/firebase');
+
+      unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
         // Not logged in -> Go to login
         router.push('/login');
@@ -56,8 +61,11 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
         setLoading(false);
       }
     });
+    })();
 
-    return () => unsubscribe();
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, [router]);
 
   if (loading) {

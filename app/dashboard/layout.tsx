@@ -4,8 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { LayoutDashboard, Car, Wrench, Package, Settings, LogOut } from 'lucide-react';
-import { signOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
 import { useLanguage } from '@/components/language-provider';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import AuthGuard from '@/components/auth-guard';
@@ -18,6 +16,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const handleLogout = async () => {
     try {
+      // Dynamic import to prevent Firebase from loading in worker
+      const { signOut } = await import('firebase/auth');
+      const { auth } = await import('@/lib/firebase');
       await signOut(auth);
       router.push('/login');
     } catch (error) {

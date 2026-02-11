@@ -4,8 +4,7 @@ export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { doc, getDoc, updateDoc, Timestamp, deleteDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import type { Timestamp } from 'firebase/firestore';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useForm } from 'react-hook-form';
@@ -33,6 +32,8 @@ export default function EditVehiclePage() {
   useEffect(() => {
     async function fetchVehicle() {
       if (!id) return;
+      const { doc, getDoc } = await import('firebase/firestore');
+      const { db } = await import('@/lib/firebase');
       const docRef = doc(db, 'vehicles', id);
       const snap = await getDoc(docRef);
       if (snap.exists()) {
@@ -49,6 +50,8 @@ export default function EditVehiclePage() {
 
   const onSubmit = async (data: VehicleForm) => {
     try {
+      const { doc, updateDoc, Timestamp } = await import('firebase/firestore');
+      const { db } = await import('@/lib/firebase');
       const docRef = doc(db, 'vehicles', id);
       await updateDoc(docRef, {
         ...data,
@@ -65,6 +68,8 @@ export default function EditVehiclePage() {
   const handleDelete = async () => {
     if (confirm(t.common.delete + "?")) {
       try {
+        const { doc, deleteDoc } = await import('firebase/firestore');
+        const { db } = await import('@/lib/firebase');
         await deleteDoc(doc(db, 'vehicles', id));
         router.push('/dashboard/vehicles');
       } catch (e) {
