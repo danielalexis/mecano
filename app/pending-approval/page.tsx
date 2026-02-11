@@ -9,9 +9,11 @@ import { ShieldAlert, LogOut } from 'lucide-react';
 
 export default function PendingApprovalPage() {
   const router = useRouter();
-  const [userId, setUserId] = useState('LOADING...');
+  const [userId, setUserId] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     // Get user ID from Firebase on client side
     (async () => {
       const { auth } = await import('@/lib/firebase');
@@ -65,7 +67,7 @@ export default function PendingApprovalPage() {
         </div>
         
         <div className="mt-6 pt-6 border-t border-brand-border text-xs font-tech text-gray-600">
-          USER_ID: {userId}
+          USER_ID: {mounted ? (userId || 'LOADING...') : 'LOADING...'}
         </div>
       </div>
     </div>
