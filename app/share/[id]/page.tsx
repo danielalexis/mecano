@@ -5,8 +5,9 @@ export const dynamic = 'force-dynamic';
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import type { Timestamp } from 'firebase/firestore';
-import { Wrench, CheckCircle, Eye, FileText, User, Moon, Sun } from 'lucide-react';
+import { Wrench, CheckCircle, Eye, FileText, User, Moon, Sun, PlayCircle } from 'lucide-react';
 import Image from 'next/image';
+import { isVideoFile } from '@/lib/utils';
 import { useLanguage } from '@/components/language-provider';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import ImageViewer from '@/components/ui/image-viewer';
@@ -263,28 +264,43 @@ export default function PublicServicePage() {
                 <CheckCircle className="w-3.5 h-3.5 text-green-500" /> {t.public.photos}
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {service.imageUrls.map((path, idx) => (
-                  <div 
-                    key={idx} 
-                    className="aspect-square relative rounded-2xl overflow-hidden border border-gray-200 dark:border-zinc-800 shadow-sm bg-gray-100 dark:bg-zinc-800 group cursor-pointer"
-                    onClick={() => {
-                      setCurrentImageIndex(idx);
-                      setViewerOpen(true);
-                    }}
-                  >
-                    <Image 
-                      src={getImageUrl(path)} 
-                      alt={`Service photo ${idx + 1}`} 
-                      fill 
-                      className="object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out"
-                      sizes="(max-width: 768px) 50vw, 33vw"
-                      unoptimized
-                    />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300">
-                      <Eye className="w-8 h-8 text-white drop-shadow-lg" />
+                {service.imageUrls.map((path, idx) => {
+                  const isVideo = isVideoFile(path);
+                  return (
+                    <div 
+                      key={idx} 
+                      className="aspect-square relative rounded-2xl overflow-hidden border border-gray-200 dark:border-zinc-800 shadow-sm bg-gray-100 dark:bg-zinc-800 group cursor-pointer"
+                      onClick={() => {
+                        setCurrentImageIndex(idx);
+                        setViewerOpen(true);
+                      }}
+                    >
+                      {isVideo ? (
+                        <div className="w-full h-full flex items-center justify-center relative bg-black">
+                          <video src={getImageUrl(path)} className="w-full h-full object-cover opacity-70 pointer-events-none" muted playsInline />
+                          <PlayCircle className="w-12 h-12 text-white/90 absolute z-10 drop-shadow-md" />
+                        </div>
+                      ) : (
+                        <Image 
+                          src={getImageUrl(path)} 
+                          alt={`Service photo ${idx + 1}`} 
+                          fill 
+                          className="object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out"
+                          sizes="(max-width: 768px) 50vw, 33vw"
+                          unoptimized
+                        />
+                      )}
+                      
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 z-20">
+                        {isVideo ? (
+                          <PlayCircle className="w-10 h-10 text-white drop-shadow-lg" />
+                        ) : (
+                          <Eye className="w-8 h-8 text-white drop-shadow-lg" />
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
